@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PixVault Server</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <section class="login-screen" id="loginScreen">
+      <div class="liquid-field" aria-hidden="true">
+        <span class="liquid-blob blob-a"></span>
+        <span class="liquid-blob blob-b"></span>
+        <span class="liquid-blob blob-c"></span>
+      </div>
+      <form class="login-card" id="loginForm">
+        <span class="glass-shine" aria-hidden="true"></span>
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span>PixVault</span>
+        </div>
+        <h1>登录照片库</h1>
+        <p>输入账号、密码和验证码后进入服务器版图库。</p>
+        <label>
+          账号
+          <input id="username" name="username" autocomplete="username" required>
+        </label>
+        <label>
+          密码
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <div class="captcha-row">
+          <label>
+            验证码
+            <input id="captcha" name="captcha" inputmode="numeric" required>
+          </label>
+          <button class="captcha-image" id="refreshCaptcha" type="button" title="刷新验证码">
+            <img id="captchaImage" alt="验证码">
+          </button>
+        </div>
+        <p class="message" id="loginMessage"></p>
+        <button class="primary-button" type="submit">登录</button>
+      </form>
+    </section>
+
+    <section class="app-shell hidden" id="appShell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span>PixVault</span>
+        </div>
+        <nav class="nav-tabs">
+          <button class="tab active" data-filter="all">全部</button>
+          <button class="tab" data-filter="favorites">收藏</button>
+          <button class="tab" data-filter="recent">最近</button>
+        </nav>
+        <button class="ghost-button" id="logoutButton" type="button">退出</button>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <h1>服务器照片库</h1>
+            <p>照片保存在服务器的 uploads 文件夹，元数据保存在 data/photos.json。</p>
+          </div>
+          <form class="search-bar" id="searchForm">
+            <input id="searchInput" type="search" placeholder="搜索标题、分类、标签">
+            <select id="categoryFilter">
+              <option value="all">全部分类</option>
+              <option value="nature">自然</option>
+              <option value="city">城市</option>
+              <option value="people">人物</option>
+              <option value="science">科研</option>
+              <option value="other">其他</option>
+            </select>
+          </form>
+        </section>
+
+        <section class="weather-panel" aria-label="当地天气">
+          <div class="weather-glass">
+            <div class="weather-orb" id="weatherOrb" aria-hidden="true"></div>
+            <div class="weather-main">
+              <span class="eyebrow">当地天气</span>
+              <h2 id="weatherTemp">读取中</h2>
+              <p id="weatherSummary">正在获取当前位置天气。</p>
+            </div>
+            <div class="weather-grid">
+              <div>
+                <span>位置</span>
+                <strong id="weatherPlace">当前位置</strong>
+              </div>
+              <div>
+                <span>体感</span>
+                <strong id="weatherFeels">--</strong>
+              </div>
+              <div>
+                <span>湿度</span>
+                <strong id="weatherHumidity">--</strong>
+              </div>
+              <div>
+                <span>风速</span>
+                <strong id="weatherWind">--</strong>
+              </div>
+            </div>
+            <button class="ghost-button weather-refresh" id="refreshWeather" type="button">刷新天气</button>
+          </div>
+        </section>
+
+        <section class="upload-panel">
+          <form id="uploadForm">
+            <input id="fileInput" name="photo" type="file" accept="image/*" required>
+            <input id="titleInput" name="title" type="text" placeholder="照片标题">
+            <select id="categoryInput" name="category">
+              <option value="nature">自然</option>
+              <option value="city">城市</option>
+              <option value="people">人物</option>
+              <option value="science">科研</option>
+              <option value="other" selected>其他</option>
+            </select>
+            <input id="tagsInput" name="tags" type="text" placeholder="标签：旅行, 蓝色, 实验">
+            <button class="primary-button" type="submit">上传</button>
+          </form>
+          <span id="uploadMessage"></span>
+        </section>
+
+        <section class="content-head">
+          <div>
+            <h2 id="galleryTitle">全部照片</h2>
+            <p id="galleryMeta">正在读取服务器照片。</p>
+          </div>
+          <select id="sortSelect">
+            <option value="newest">最新</option>
+            <option value="favorite">收藏优先</option>
+            <option value="title">标题</option>
+          </select>
+        </section>
+
+        <section class="gallery" id="gallery"></section>
+        <section class="empty hidden" id="emptyState">没有匹配的照片。</section>
+      </main>
+    </section>
+
+    <dialog class="viewer" id="viewer">
+      <article>
+        <button id="closeViewer" class="icon-button" type="button">×</button>
+        <img id="viewerImage" alt="">
+        <aside>
+          <h2 id="viewerTitle"></h2>
+          <p id="viewerTags"></p>
+          <p id="viewerDate"></p>
+          <div class="viewer-actions">
+            <button class="ghost-button" id="favoriteButton" type="button">收藏</button>
+            <a class="primary-button" id="downloadButton" download>下载</a>
+          </div>
+        </aside>
+      </article>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
