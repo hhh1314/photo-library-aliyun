@@ -1,0 +1,13 @@
+{
+  "name": "photo-library-aliyun",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A server-backed private photo library for Aliyun ECS with GitHub deployment.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
