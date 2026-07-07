@@ -1,0 +1,56 @@
+name: Deploy to Aliyun ECS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
+      ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
+      ALIYUN_APP_DIR: ${{ secrets.ALIYUN_APP_DIR }}
+      ALIYUN_APP_PORT: ${{ secrets.ALIYUN_APP_PORT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        run: |
+          test -n "$ALIYUN_HOST"
+          test -n "$ALIYUN_USER"
+          test -n "$ALIYUN_APP_DIR"
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/aliyun_key
+          chmod 600 ~/.ssh/aliyun_key
+          ssh-keyscan -H "$ALIYUN_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload files
+        run: |
+          rsync -az --delete \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude "node_modules/" \
+            --exclude "uploads/" \
+            --exclude "data/" \
+            -e "ssh -i ~/.ssh/aliyun_key" \
+            ./ "$ALIYUN_USER@$ALIYUN_HOST:$ALIYUN_APP_DIR/"
+
+      - name: Restart service
+        run: |
+          ssh -i ~/.ssh/aliyun_key "$ALIYUN_USER@$ALIYUN_HOST" "
+            set -e
+            cd '$ALIYUN_APP_DIR'
+            mkdir -p uploads data
+            export PORT='${ALIYUN_APP_PORT:-3000}'
+            if command -v pm2 >/dev/null 2>&1; then
+              pm2 restart pixvault --update-env || pm2 start server.js --name pixvault
+              pm2 save || true
+            else
+              pkill -f 'node server.js' || true
+              nohup node server.js > app.log 2>&1 &
+            fi
+          "
