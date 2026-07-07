@@ -18,7 +18,7 @@
 
 - `ALIYUN_HOST`：阿里云服务器公网 IP 或域名
 - `ALIYUN_USER`：SSH 用户名，例如 `root`
-- `ALIYUN_SSH_KEY`：SSH 私钥内容
+- `ALIYUN_SSH_KEY`：SSH 私钥内容，通常以 `-----BEGIN OPENSSH PRIVATE KEY-----` 或 `-----BEGIN RSA PRIVATE KEY-----` 开头，不是 `ssh-rsa ...` 公钥
 - `ALIYUN_APP_DIR`：服务器部署目录，例如 `/www/pixvault`
 - `ALIYUN_APP_PORT`：Node 服务端口，例如 `3000`
 
